@@ -1,0 +1,46 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+
+
+
+//Movie
+Route::get('/', 'MovieController@index');
+Route::get('/detailmovie/{movie}', 'MovieController@show')->name('detailmovie.show');
+
+//Comment
+Route::post('/detailmovie/{movie}', 'MovieController@commentStore')->name('movie.commentStore');
+
+
+
+
+Route::get('/us', 'MovieController@us');
+
+
+
+Route::get('/admin', function(){
+	return view('admin/dashboard');
+})->middleware(['auth', 'auth.admin'])->name('admin.home');
+
+Route::namespace('Admin')->prefix('admin')->middleware(['auth', 'auth.admin'])->name('admin.')->group(function(){
+	Route::resource('/users', 'UserController', ['except' => ['show', 'create', 'store']]);
+	Route::resource('/content', 'ContentController', ['except' => ['show']]);
+	Route::resource('/req', 'ReqController', ['except' => ['show']]);
+
+	// Route::resource('/comment', 'CommentController', ['except' => ['show','create', 'store']]);
+});
